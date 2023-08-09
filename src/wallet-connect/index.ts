@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import { EthereumProvider } from '@walletconnect/ethereum-provider'
 
 import {
   IConnectorMessage,
@@ -28,9 +28,8 @@ export class WalletsConnect extends AbstractConnector {
    * @example this.connect().then((connector: IConnectorMessage) => console.log(connector),(err: IConnectorMessage) => console.log(err));
    */
   public async connect(provider: IProvider): Promise<IConnectorMessage> {
-    console.log("provider", provider);
     return new Promise<any>(async (resolve, reject) => {
-      this.connector = new WalletConnectProvider(
+      this.connector = new EthereumProvider.init(
         provider.provider[provider.useProvider]
       );
       await this.connector
