@@ -48,13 +48,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 exports.__esModule = true;
 exports.WalletsConnect = void 0;
 var rxjs_1 = require("rxjs");
-var web3_provider_1 = __importDefault(require("@walletconnect/web3-provider"));
+var ethereum_provider_1 = require("@walletconnect/ethereum-provider");
 var helpers_1 = require("../helpers");
 var abstract_connector_1 = require("../abstract-connector");
 var WalletsConnect = /** @class */ (function (_super) {
@@ -77,11 +74,15 @@ var WalletsConnect = /** @class */ (function (_super) {
             var _this = this;
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+                        var _a;
                         var _this = this;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
+                        return __generator(this, function (_b) {
+                            switch (_b.label) {
                                 case 0:
-                                    this.connector = new web3_provider_1["default"](provider.provider[provider.useProvider]);
+                                    _a = this;
+                                    return [4 /*yield*/, ethereum_provider_1.EthereumProvider.init(provider.provider[provider.useProvider])];
+                                case 1:
+                                    _a.connector = _b.sent();
                                     return [4 /*yield*/, this.connector
                                             .enable()
                                             .then(function () {
@@ -90,8 +91,8 @@ var WalletsConnect = /** @class */ (function (_super) {
                                                 connected: true,
                                                 provider: _this.connector,
                                                 message: {
-                                                    title: 'Success',
-                                                    subtitle: 'Wallet Connect',
+                                                    title: "Success",
+                                                    subtitle: "Wallet Connect",
                                                     text: "Wallet Connect connected."
                                                 }
                                             });
@@ -100,14 +101,14 @@ var WalletsConnect = /** @class */ (function (_super) {
                                                 code: 5,
                                                 connected: false,
                                                 message: {
-                                                    title: 'Error',
-                                                    subtitle: 'Error connect',
+                                                    title: "Error",
+                                                    subtitle: "Error connect",
                                                     text: "User closed qr modal window."
                                                 }
                                             });
                                         })];
-                                case 1:
-                                    _a.sent();
+                                case 2:
+                                    _b.sent();
                                     return [2 /*return*/];
                             }
                         });
@@ -118,43 +119,43 @@ var WalletsConnect = /** @class */ (function (_super) {
     WalletsConnect.prototype.eventSubscriber = function () {
         var _this = this;
         return new rxjs_1.Observable(function (observer) {
-            _this.connector.on('connect', function (error, payload) {
+            _this.connector.on("connect", function (error, payload) {
                 if (error) {
                     observer.error({
                         code: 3,
                         message: {
-                            title: 'Error',
-                            subtitle: 'Authorized error',
-                            message: 'You are not authorized.'
+                            title: "Error",
+                            subtitle: "Authorized error",
+                            message: "You are not authorized."
                         }
                     });
                 }
                 var _a = payload.params[0], accounts = _a.accounts, chainId = _a.chainId;
-                observer.next({ address: accounts, network: chainId, name: 'connect' });
+                observer.next({ address: accounts, network: chainId, name: "connect" });
             });
-            _this.connector.on('disconnect', function (error, payload) {
+            _this.connector.on("disconnect", function (error, payload) {
                 if (error) {
-                    console.log('wallet connect on connect error', error, payload);
+                    console.log("wallet connect on connect error", error, payload);
                     observer.error({
                         code: 6,
                         message: {
-                            title: 'Error',
-                            subtitle: 'Disconnect',
-                            message: 'Wallet disconnected'
+                            title: "Error",
+                            subtitle: "Disconnect",
+                            message: "Wallet disconnected"
                         }
                     });
                 }
             });
-            _this.connector.on('accountsChanged', function (accounts, payload) {
-                console.log('WalletConnect account changed', accounts, payload);
+            _this.connector.on("accountsChanged", function (accounts, payload) {
+                console.log("WalletConnect account changed", accounts, payload);
                 observer.next({
                     address: accounts[0],
                     network: helpers_1.parameters.chainsMap[helpers_1.parameters.chainIDMap[_this.connector.chainId]],
-                    name: 'accountsChanged'
+                    name: "accountsChanged"
                 });
             });
-            _this.connector.on('chainChanged', function (chainId) {
-                console.log('WalletConnect chain changed:', chainId);
+            _this.connector.on("chainChanged", function (chainId) {
+                console.log("WalletConnect chain changed:", chainId);
             });
             // this.connector.on('wc_sessionUpdate', (error, payload) => {
             //   console.log(error || payload, 'wc_sessionUpdate');

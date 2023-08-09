@@ -1,5 +1,5 @@
-import { Contract } from 'web3-eth-contract';
-import { AbiItem } from 'web3-utils';
+import { Contract } from "web3-eth-contract";
+import { AbiItem } from "web3-utils";
 export interface IProvider {
     name: string;
     useProvider?: string;
@@ -16,6 +16,18 @@ export interface IProvider {
                 [index: number]: string;
             };
             chainId?: number;
+        };
+        walletConnectV2?: {
+            projectId?: string;
+            chains?: number[];
+            optionalChains?: number[];
+            showQrModal?: boolean;
+            metadata?: {
+                description?: string;
+                url?: string;
+                icons?: string[];
+                name?: string;
+            };
         };
     };
 }
