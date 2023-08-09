@@ -1,14 +1,14 @@
-import { Observable } from 'rxjs';
-import WalletConnectProvider from '@walletconnect/web3-provider';
+import { Observable } from "rxjs";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 import {
   IConnectorMessage,
   IProvider,
   IEvent,
   IEventError,
-} from '../interface';
-import { parameters } from '../helpers';
-import { AbstractConnector } from '../abstract-connector';
+} from "../interface";
+import { parameters } from "../helpers";
+import { AbstractConnector } from "../abstract-connector";
 
 export class WalletsConnect extends AbstractConnector {
   public connector: WalletConnectProvider;
@@ -28,9 +28,10 @@ export class WalletsConnect extends AbstractConnector {
    * @example this.connect().then((connector: IConnectorMessage) => console.log(connector),(err: IConnectorMessage) => console.log(err));
    */
   public async connect(provider: IProvider): Promise<IConnectorMessage> {
+    console.log("provider", provider);
     return new Promise<any>(async (resolve, reject) => {
       this.connector = new WalletConnectProvider(
-        provider.provider[provider.useProvider],
+        provider.provider[provider.useProvider]
       );
       await this.connector
         .enable()
@@ -40,8 +41,8 @@ export class WalletsConnect extends AbstractConnector {
             connected: true,
             provider: this.connector,
             message: {
-              title: 'Success',
-              subtitle: 'Wallet Connect',
+              title: "Success",
+              subtitle: "Wallet Connect",
               text: `Wallet Connect connected.`,
             },
           });
@@ -51,8 +52,8 @@ export class WalletsConnect extends AbstractConnector {
             code: 5,
             connected: false,
             message: {
-              title: 'Error',
-              subtitle: 'Error connect',
+              title: "Error",
+              subtitle: "Error connect",
               text: `User closed qr modal window.`,
             },
           });
@@ -62,41 +63,41 @@ export class WalletsConnect extends AbstractConnector {
 
   public eventSubscriber(): Observable<IEvent | IEventError> {
     return new Observable((observer) => {
-      this.connector.on('connect', (error: any, payload: any) => {
+      this.connector.on("connect", (error: any, payload: any) => {
         if (error) {
           observer.error({
             code: 3,
             message: {
-              title: 'Error',
-              subtitle: 'Authorized error',
-              message: 'You are not authorized.',
+              title: "Error",
+              subtitle: "Authorized error",
+              message: "You are not authorized.",
             },
           });
         }
 
         const { accounts, chainId } = payload.params[0];
 
-        observer.next({ address: accounts, network: chainId, name: 'connect' });
+        observer.next({ address: accounts, network: chainId, name: "connect" });
       });
 
-      this.connector.on('disconnect', (error, payload) => {
+      this.connector.on("disconnect", (error, payload) => {
         if (error) {
-          console.log('wallet connect on connect error', error, payload);
+          console.log("wallet connect on connect error", error, payload);
           observer.error({
             code: 6,
             message: {
-              title: 'Error',
-              subtitle: 'Disconnect',
-              message: 'Wallet disconnected',
+              title: "Error",
+              subtitle: "Disconnect",
+              message: "Wallet disconnected",
             },
           });
         }
       });
 
       this.connector.on(
-        'accountsChanged',
+        "accountsChanged",
         (accounts: string[], payload: any) => {
-          console.log('WalletConnect account changed', accounts, payload);
+          console.log("WalletConnect account changed", accounts, payload);
 
           observer.next({
             address: accounts[0],
@@ -104,13 +105,13 @@ export class WalletsConnect extends AbstractConnector {
               parameters.chainsMap[
                 parameters.chainIDMap[this.connector.chainId]
               ],
-            name: 'accountsChanged',
+            name: "accountsChanged",
           });
-        },
+        }
       );
 
-      this.connector.on('chainChanged', (chainId: number) => {
-        console.log('WalletConnect chain changed:', chainId);
+      this.connector.on("chainChanged", (chainId: number) => {
+        console.log("WalletConnect chain changed:", chainId);
       });
 
       // this.connector.on('wc_sessionUpdate', (error, payload) => {
