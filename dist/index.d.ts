@@ -7,7 +7,7 @@ import { WalletsConnect } from './wallet-connect';
 import { CoinbaseWalletConnect } from './coinbase-wallet';
 import { KardiaChainConnect } from './kardiachain';
 import { OntoConnect } from './onto';
-import { INetwork, IProvider, IAddContract, IConnect, ISettings, IError, IConnectorMessage, IChain, INoNameContract, IEvent, IEventError } from './interface';
+import { INetwork, IProvider, IAddContract, IConnect, ISettings, IError, IConnectorMessage, ContractWeb3, IChain, INoNameContract, IEvent, IEventError } from './interface';
 export declare class ConnectWallet {
     private connector;
     private providerName;
@@ -146,7 +146,7 @@ export declare class ConnectWallet {
      * @returns return contract parameters and methods.
      * @example connectWallet.Contract(ContractName);
      */
-    Contract: (name: string) => any;
+    Contract: (name: string) => ContractWeb3;
     /**
      * Get access to use Web3. Return Web3 variable to use it methods and parameters.
      *
