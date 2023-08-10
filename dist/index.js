@@ -354,6 +354,8 @@ var ConnectWallet = /** @class */ (function () {
      * @example connectWallet.getContract(contract);
      */
     ConnectWallet.prototype.getContract = function (contract) {
+        if (Array.isArray(contract.abi))
+            contract.abi = contract.abi[0];
         return new this.Web3.eth.Contract(contract.abi, contract.address);
     };
     /**
@@ -368,6 +370,8 @@ var ConnectWallet = /** @class */ (function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
             try {
+                if (Array.isArray(contract.abi))
+                    contract.abi = contract.abi[0];
                 _this.contracts[contract.name] = new _this.Web3.eth.Contract(contract.abi, contract.address);
                 resolve(true);
             }

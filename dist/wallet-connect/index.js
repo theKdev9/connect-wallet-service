@@ -133,21 +133,21 @@ var WalletsConnect = /** @class */ (function (_super) {
                 var _a = payload.params[0], accounts = _a.accounts, chainId = _a.chainId;
                 observer.next({ address: accounts, network: chainId, name: "connect" });
             });
-            _this.connector.on("disconnect", function (error, payload) {
-                if (error) {
-                    console.log("wallet connect on connect error", error, payload);
-                    observer.error({
-                        code: 6,
-                        message: {
-                            title: "Error",
-                            subtitle: "Disconnect",
-                            message: "Wallet disconnected"
-                        }
-                    });
-                }
+            _this.connector.on("disconnect", function (args) {
+                var message = args.message, code = args.code, _a = args.data, data = _a === void 0 ? "" : _a;
+                console.log("wallet connect on connect error", code, message, data);
+                observer.error({
+                    code: code,
+                    message: {
+                        title: "Error",
+                        subtitle: "Disconnect",
+                        message: message,
+                        data: data
+                    }
+                });
             });
-            _this.connector.on("accountsChanged", function (accounts, payload) {
-                console.log("WalletConnect account changed", accounts, payload);
+            _this.connector.on("accountsChanged", function (accounts) {
+                // console.log("WalletConnect account changed", accounts, payload);
                 observer.next({
                     address: accounts[0],
                     network: helpers_1.parameters.chainsMap[helpers_1.parameters.chainIDMap[_this.connector.chainId]],

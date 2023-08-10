@@ -1,4 +1,4 @@
-import Web3 from "web3";
+import Web3, { ContractAbi } from "web3";
 import { Observable } from "rxjs";
 import { Contract } from "web3-eth-contract";
 import { provider } from "web3-core";
@@ -130,7 +130,7 @@ export declare class ConnectWallet {
      * @returns return contract web3 methods.
      * @example connectWallet.getContract(contract);
      */
-    getContract(contract: INoNameContract): Contract;
+    getContract(contract: INoNameContract): Contract<ContractAbi>;
     /**
      * Add contract to Web3. Provide contract name, address and abi code to initialize it, then you will
      * able to use contract(name) function to get contract from web3 and use contract methods.
@@ -163,7 +163,7 @@ export declare class ConnectWallet {
      * @returns return address balance.
      * @example connectWallet.getBalance(address).then((balance: string)=> {console.log(balance)});
      */
-    getBalance: (address: string) => Promise<string | number>;
+    getBalance: (address: string) => Promise<bigint>;
     /**
      * Logout function. Use this function if you want to do logout from your application. Function will reset
      * current connection to defoult then you need to initialize connect() function again to connect to your
