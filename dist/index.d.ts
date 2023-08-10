@@ -1,13 +1,13 @@
-import Web3, { ContractAbi } from "web3";
-import { Observable } from "rxjs";
-import { Contract } from "web3-eth-contract";
-import { provider } from "web3-core";
-import { MetamaskConnect } from "./metamask";
-import { WalletsConnect } from "./wallet-connect";
-import { CoinbaseWalletConnect } from "./coinbase-wallet";
-import { KardiaChainConnect } from "./kardiachain";
-import { OntoConnect } from "./onto";
-import { INetwork, IProvider, IAddContract, IConnect, ISettings, IError, IConnectorMessage, IChain, INoNameContract, IEvent, IEventError } from "./interface";
+import Web3 from 'web3';
+import { Observable } from 'rxjs';
+import { Contract } from 'web3-eth-contract';
+import { provider } from 'web3-core';
+import { MetamaskConnect } from './metamask';
+import { WalletsConnect } from './wallet-connect';
+import { CoinbaseWalletConnect } from './coinbase-wallet';
+import { KardiaChainConnect } from './kardiachain';
+import { OntoConnect } from './onto';
+import { INetwork, IProvider, IAddContract, IConnect, ISettings, IError, IConnectorMessage, ContractWeb3, IChain, INoNameContract, IEvent, IEventError } from './interface';
 export declare class ConnectWallet {
     private connector;
     private providerName;
@@ -130,7 +130,7 @@ export declare class ConnectWallet {
      * @returns return contract web3 methods.
      * @example connectWallet.getContract(contract);
      */
-    getContract(contract: INoNameContract): Contract<ContractAbi>;
+    getContract(contract: INoNameContract): Contract;
     /**
      * Add contract to Web3. Provide contract name, address and abi code to initialize it, then you will
      * able to use contract(name) function to get contract from web3 and use contract methods.
@@ -147,7 +147,7 @@ export declare class ConnectWallet {
      * @returns return contract parameters and methods.
      * @example connectWallet.Contract(ContractName);
      */
-    Contract: (name: string) => any;
+    Contract: (name: string) => ContractWeb3;
     /**
      * Get access to use Web3. Return Web3 variable to use it methods and parameters.
      *
@@ -163,7 +163,7 @@ export declare class ConnectWallet {
      * @returns return address balance.
      * @example connectWallet.getBalance(address).then((balance: string)=> {console.log(balance)});
      */
-    getBalance: (address: string) => Promise<bigint>;
+    getBalance: (address: string) => Promise<string | number>;
     /**
      * Logout function. Use this function if you want to do logout from your application. Function will reset
      * current connection to defoult then you need to initialize connect() function again to connect to your

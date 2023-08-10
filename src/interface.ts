@@ -1,5 +1,5 @@
-import type { AbiParameter, ContractAbi } from "web3";
 import { Contract } from "web3-eth-contract";
+import { AbiItem } from "web3-utils";
 
 export interface IProvider {
   name: string;
@@ -33,7 +33,7 @@ export interface IProvider {
   };
 }
 
-export type ContractWeb3 = Contract<ContractAbi>;
+export type ContractWeb3 = Contract;
 
 export interface IEvent {
   name: string;
@@ -112,12 +112,12 @@ export interface IMessageProvider {
 }
 
 export interface IContract {
-  [index: string]: Contract<ContractAbi>;
+  [index: string]: Contract;
 }
 
 export interface INoNameContract {
   address: string;
-  abi: ContractAbi | Array<ContractAbi>;
+  abi: AbiItem | Array<AbiItem>;
 }
 
 export interface IAddContract extends INoNameContract {
