@@ -34,6 +34,7 @@ export class WalletsConnect extends AbstractConnector {
       this.connector = await EthereumProvider.init(
         provider.provider[provider.useProvider]
       );
+
       await this.connector
         .enable()
         .then(() => {

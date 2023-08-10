@@ -57,12 +57,12 @@ var ConnectWallet = /** @class */ (function () {
     function ConnectWallet(initProvider) {
         var _this = this;
         this.availableProviders = [
-            'MetaMask',
-            'WalletConnect',
-            'CoinbaseWallet',
-            'KardiaChain',
-            'Onto',
-            'Okx',
+            "MetaMask",
+            "WalletConnect",
+            "CoinbaseWallet",
+            "KardiaChain",
+            "Onto",
+            "Okx",
         ];
         this.contracts = {};
         this.allTxSubscribers = [];
@@ -113,7 +113,7 @@ var ConnectWallet = /** @class */ (function () {
          * @example connectWallet.signMsg('0x0000000000000000000', 'some_data').then(data => console.log('sign:', data),err => console.log('sign err:',err));
          */
         this.signMsg = function (userAddr, msg) {
-            return _this.Web3.eth.personal.sign(msg, userAddr, '');
+            return _this.Web3.eth.personal.sign(msg, userAddr, "");
         };
         if (initProvider) {
             this.Web3 = new web3_1["default"](initProvider);
@@ -136,12 +136,12 @@ var ConnectWallet = /** @class */ (function () {
                 if (!this.availableProviders.includes(provider.name)) {
                     return [2 /*return*/, {
                             code: 2,
-                            type: 'error',
+                            type: "error",
                             connected: false,
                             provider: provider,
                             message: {
-                                title: 'Error',
-                                subtitle: 'Provider Error',
+                                title: "Error",
+                                subtitle: "Provider Error",
                                 text: "Your provider doesn't exists"
                             }
                         }];
@@ -154,7 +154,12 @@ var ConnectWallet = /** @class */ (function () {
                             .connect(provider)
                             .then(function (connect) { return _this.applySettings(connect); })
                             .then(function (connect) {
-                            connect.connected ? _this.initWeb3(connect.provider) : reject(connect);
+                            connect.connected
+                                ? _this.initWeb3(connect.provider)
+                                : reject(connect);
+                            connect.connected
+                                ? (_this.provider = connect.provider)
+                                : reject(connect);
                             resolve(connect);
                         }, function (err) { return reject(_this.applySettings(err)); });
                     })];
@@ -171,17 +176,17 @@ var ConnectWallet = /** @class */ (function () {
     ConnectWallet.prototype.chooseProvider = function (name) {
         this.providerName = name;
         switch (name) {
-            case 'MetaMask':
+            case "MetaMask":
                 return new metamask_1.MetamaskConnect(this.network);
-            case 'WalletConnect':
+            case "WalletConnect":
                 return new wallet_connect_1.WalletsConnect();
-            case 'CoinbaseWallet':
+            case "CoinbaseWallet":
                 return new coinbase_wallet_1.CoinbaseWalletConnect(this.network);
-            case 'KardiaChain':
+            case "KardiaChain":
                 return new kardiachain_1.KardiaChainConnect();
-            case 'Onto':
+            case "Onto":
                 return new onto_1.OntoConnect(this.network);
-            case 'Okx':
+            case "Okx":
                 return new okx_1.OkxConnect(this.network);
         }
     };
@@ -239,9 +244,9 @@ var ConnectWallet = /** @class */ (function () {
         var error = {
             code: 4,
             message: {
-                title: 'Error',
-                subtitle: 'Chain error',
-                text: ''
+                title: "Error",
+                subtitle: "Chain error",
+                text: ""
             }
         };
         return new Promise(function (resolve, reject) {
@@ -253,7 +258,8 @@ var ConnectWallet = /** @class */ (function () {
                 var chainID_1 = _this.network.chainID;
                 var chainsMap_1 = helpers_1.parameters.chainsMap, chainIDMap_1 = helpers_1.parameters.chainIDMap;
                 _this.connector.getAccounts().then(function (connectInfo) {
-                    if (connectInfo.network && connectInfo.network.chainID !== chainID_1) {
+                    if (connectInfo.network &&
+                        connectInfo.network.chainID !== chainID_1) {
                         error.message.text = "Please set network: " + chainsMap_1[chainIDMap_1[chainID_1]].name + ".";
                         reject(_this.applySettings(error));
                     }

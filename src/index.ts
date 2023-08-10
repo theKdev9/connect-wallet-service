@@ -1,13 +1,13 @@
-import Web3 from 'web3';
-import { Observable } from 'rxjs';
-import { Contract } from 'web3-eth-contract';
-import { provider } from 'web3-core';
+import Web3 from "web3";
+import { Observable } from "rxjs";
+import { Contract } from "web3-eth-contract";
+import { provider } from "web3-core";
 
-import { MetamaskConnect } from './metamask';
-import { WalletsConnect } from './wallet-connect';
-import { CoinbaseWalletConnect } from './coinbase-wallet';
-import { KardiaChainConnect } from './kardiachain';
-import { OntoConnect } from './onto';
+import { MetamaskConnect } from "./metamask";
+import { WalletsConnect } from "./wallet-connect";
+import { CoinbaseWalletConnect } from "./coinbase-wallet";
+import { KardiaChainConnect } from "./kardiachain";
+import { OntoConnect } from "./onto";
 import { OkxConnect } from "./okx";
 
 import {
@@ -25,8 +25,8 @@ import {
   INoNameContract,
   IEvent,
   IEventError,
-} from './interface';
-import { parameters, addChains } from './helpers';
+} from "./interface";
+import { parameters, addChains } from "./helpers";
 
 export class ConnectWallet {
   private connector:
@@ -37,16 +37,17 @@ export class ConnectWallet {
     | OntoConnect;
   private providerName: string;
   private availableProviders: string[] = [
-    'MetaMask',
-    'WalletConnect',
-    'CoinbaseWallet',
-    'KardiaChain',
-    'Onto',
-    'Okx',
+    "MetaMask",
+    "WalletConnect",
+    "CoinbaseWallet",
+    "KardiaChain",
+    "Onto",
+    "Okx",
   ];
 
   private network: INetwork;
   private settings: ISettings;
+  public provider: any;
 
   public Web3: Web3;
   private contracts: IContract = {};
@@ -83,17 +84,17 @@ export class ConnectWallet {
   public async connect(
     provider: IProvider,
     network: INetwork,
-    settings?: ISettings,
+    settings?: ISettings
   ): Promise<IConnectorMessage> {
     if (!this.availableProviders.includes(provider.name)) {
       return {
         code: 2,
-        type: 'error',
+        type: "error",
         connected: false,
         provider,
         message: {
-          title: 'Error',
-          subtitle: 'Provider Error',
+          title: "Error",
+          subtitle: "Provider Error",
           text: `Your provider doesn't exists`,
         },
       };
@@ -106,12 +107,20 @@ export class ConnectWallet {
 
     return new Promise<IConnectorMessage>((resolve, reject) => {
       this.connector
-      .connect(provider)
-      .then((connect) => this.applySettings(connect))
-      .then((connect: IConnectorMessage) => {
-        connect.connected ? this.initWeb3(connect.provider) : reject(connect);
-        resolve(connect);
-      },(err) => reject(this.applySettings(err)));
+        .connect(provider)
+        .then((connect) => this.applySettings(connect))
+        .then(
+          (connect: IConnectorMessage) => {
+            connect.connected
+              ? this.initWeb3(connect.provider)
+              : reject(connect);
+            connect.connected
+              ? (this.provider = connect.provider)
+              : reject(connect);
+            resolve(connect);
+          },
+          (err) => reject(this.applySettings(err))
+        );
     });
   }
 
@@ -125,17 +134,17 @@ export class ConnectWallet {
   private chooseProvider(name: string): MetamaskConnect | WalletsConnect {
     this.providerName = name;
     switch (name) {
-      case 'MetaMask':
+      case "MetaMask":
         return new MetamaskConnect(this.network);
-      case 'WalletConnect':
+      case "WalletConnect":
         return new WalletsConnect();
-      case 'CoinbaseWallet':
+      case "CoinbaseWallet":
         return new CoinbaseWalletConnect(this.network);
-      case 'KardiaChain':
+      case "KardiaChain":
         return new KardiaChainConnect();
-      case 'Onto':
+      case "Onto":
         return new OntoConnect(this.network);
-      case 'Okx':
+      case "Okx":
         return new OkxConnect(this.network);
     }
   }
@@ -185,7 +194,7 @@ export class ConnectWallet {
    * @example connectWallet.applySettings(data); //=> data.type etc.
    */
   private applySettings(
-    data: IConnectorMessage | IError | IConnect,
+    data: IConnectorMessage | IError | IConnect
   ): IConnectorMessage | IError | IConnect {
     if (this.settings.providerType) {
       data.type = this.providerName;
@@ -203,9 +212,9 @@ export class ConnectWallet {
     const error: IError = {
       code: 4,
       message: {
-        title: 'Error',
-        subtitle: 'Chain error',
-        text: '',
+        title: "Error",
+        subtitle: "Chain error",
+        text: "",
       },
     };
 
@@ -219,7 +228,10 @@ export class ConnectWallet {
 
         this.connector.getAccounts().then(
           (connectInfo: IConnect) => {
-            if (connectInfo.network && connectInfo.network.chainID !== chainID) {
+            if (
+              connectInfo.network &&
+              connectInfo.network.chainID !== chainID
+            ) {
               error.message.text = `Please set network: ${
                 chainsMap[chainIDMap[chainID]].name
               }.`;
@@ -231,7 +243,7 @@ export class ConnectWallet {
           },
           (error: IError) => {
             reject(this.applySettings(error));
-          },
+          }
         );
       } else {
         error.code = 7;
@@ -333,7 +345,7 @@ export class ConnectWallet {
       try {
         this.contracts[contract.name] = new this.Web3.eth.Contract(
           contract.abi,
-          contract.address,
+          contract.address
         );
         resolve(true);
       } catch {
@@ -386,7 +398,7 @@ export class ConnectWallet {
    * @example connectWallet.signMsg('0x0000000000000000000', 'some_data').then(data => console.log('sign:', data),err => console.log('sign err:',err));
    */
   public signMsg = (userAddr: string, msg: string): Promise<any> => {
-    return this.Web3.eth.personal.sign(msg, userAddr, '');
+    return this.Web3.eth.personal.sign(msg, userAddr, "");
   };
 
   /**
@@ -402,7 +414,7 @@ export class ConnectWallet {
     return new Observable((observer) => {
       this.connector.eventSubscriber().subscribe(
         (event: IEvent) => observer.next(event),
-        (error: IEventError) => observer.error(error),
+        (error: IEventError) => observer.error(error)
       );
     });
   }
