@@ -31,7 +31,7 @@
     "@walletconnect/modal": "^2.6.1",
     "rxjs": "^7.5.5",
     "tslib": "^2.0.0",
-    "web3": "^4.0.3"
+    "web3": "^1.8.1"
   },
   "devDependencies": {
     "tslint": "~6.1.0",
