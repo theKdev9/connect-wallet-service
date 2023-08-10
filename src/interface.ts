@@ -117,7 +117,7 @@ export interface IContract {
 
 export interface INoNameContract {
   address: string;
-  abi: AbiParameter | Array<AbiParameter>;
+  abi: ContractAbi | Array<ContractAbi>;
 }
 
 export interface IAddContract extends INoNameContract {

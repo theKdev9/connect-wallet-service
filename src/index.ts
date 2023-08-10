@@ -1,4 +1,4 @@
-import Web3 from "web3";
+import Web3, { ContractAbi } from "web3";
 import { Observable } from "rxjs";
 import { Contract } from "web3-eth-contract";
 import { provider } from "web3-core";
@@ -328,7 +328,8 @@ export class ConnectWallet {
    * @returns return contract web3 methods.
    * @example connectWallet.getContract(contract);
    */
-  public getContract(contract: INoNameContract): Contract {
+  public getContract(contract: INoNameContract): Contract<ContractAbi> {
+    if (Array.isArray(contract.abi)) contract.abi = contract.abi[0];
     return new this.Web3.eth.Contract(contract.abi, contract.address);
   }
 
@@ -343,6 +344,7 @@ export class ConnectWallet {
   public addContract(contract: IAddContract): Promise<boolean> {
     return new Promise<any>((resolve, reject) => {
       try {
+        if (Array.isArray(contract.abi)) contract.abi = contract.abi[0];
         this.contracts[contract.name] = new this.Web3.eth.Contract(
           contract.abi,
           contract.address
@@ -379,7 +381,7 @@ export class ConnectWallet {
    * @returns return address balance.
    * @example connectWallet.getBalance(address).then((balance: string)=> {console.log(balance)});
    */
-  public getBalance = (address: string): Promise<string | number> => {
+  public getBalance = (address: string): Promise<bigint> => {
     return this.Web3.eth.getBalance(address);
   };
 

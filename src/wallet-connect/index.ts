@@ -82,37 +82,32 @@ export class WalletsConnect extends AbstractConnector {
         observer.next({ address: accounts, network: chainId, name: "connect" });
       });
 
-      this.connector.on("disconnect", (error, payload) => {
-        if (error) {
-          console.log("wallet connect on connect error", error, payload);
-          observer.error({
-            code: 6,
-            message: {
-              title: "Error",
-              subtitle: "Disconnect",
-              message: "Wallet disconnected",
-            },
-          });
-        }
+      this.connector.on("disconnect", (args) => {
+        const { message, code, data = "" } = args;
+        console.log("wallet connect on connect error", code, message, data);
+        observer.error({
+          code: code,
+          message: {
+            title: "Error",
+            subtitle: "Disconnect",
+            message,
+            data,
+          },
+        });
       });
 
-      this.connector.on(
-        "accountsChanged",
-        (accounts: string[], payload: any) => {
-          console.log("WalletConnect account changed", accounts, payload);
+      this.connector.on("accountsChanged", (accounts) => {
+        // console.log("WalletConnect account changed", accounts, payload);
 
-          observer.next({
-            address: accounts[0],
-            network:
-              parameters.chainsMap[
-                parameters.chainIDMap[this.connector.chainId]
-              ],
-            name: "accountsChanged",
-          });
-        }
-      );
+        observer.next({
+          address: accounts[0],
+          network:
+            parameters.chainsMap[parameters.chainIDMap[this.connector.chainId]],
+          name: "accountsChanged",
+        });
+      });
 
-      this.connector.on("chainChanged", (chainId: number) => {
+      this.connector.on("chainChanged", (chainId) => {
         console.log("WalletConnect chain changed:", chainId);
       });
 
