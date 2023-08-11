@@ -11,6 +11,10 @@ import {
 } from "../interface";
 import { parameters } from "../helpers";
 import { AbstractConnector } from "../abstract-connector";
+import {
+  ProviderInfo,
+  ProviderRpcError,
+} from "@walletconnect/ethereum-provider/dist/types/types";
 
 export class WalletsConnect extends AbstractConnector {
   public connector: IEthereumProvider;
@@ -65,21 +69,19 @@ export class WalletsConnect extends AbstractConnector {
 
   public eventSubscriber(): Observable<IEvent | IEventError> {
     return new Observable((observer) => {
-      this.connector.on("connect", (error: any, payload: any) => {
-        if (error) {
-          observer.error({
-            code: 3,
-            message: {
-              title: "Error",
-              subtitle: "Authorized error",
-              message: "You are not authorized.",
-            },
-          });
-        }
-
-        const { accounts, chainId } = payload.params[0];
-
-        observer.next({ address: accounts, network: chainId, name: "connect" });
+      this.connector.on("connect", (providerInfo) => {
+        // if (error) {
+        //   observer.error({
+        //     code: 3,
+        //     message: {
+        //       title: "Error",
+        //       subtitle: "Authorized error",
+        //       message: "You are not authorized.",
+        //     },
+        //   });
+        // }
+        // const { accounts, chainId } = payload.params[0];
+        // observer.next({ address: accounts, network: chainId, name: "connect" });
       });
 
       this.connector.on("disconnect", (args) => {
