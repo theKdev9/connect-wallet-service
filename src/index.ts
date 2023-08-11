@@ -48,7 +48,6 @@ export class ConnectWallet {
 
   private network: INetwork;
   private settings: ISettings;
-  public provider: Provider;
 
   public Web3: Web3;
   private contracts: IContract = {};
@@ -114,9 +113,6 @@ export class ConnectWallet {
           (connect: IConnectorMessage) => {
             connect.connected
               ? this.initWeb3(connect.provider)
-              : reject(connect);
-            connect.connected
-              ? (this.provider = connect.provider)
               : reject(connect);
             resolve(connect);
           },
