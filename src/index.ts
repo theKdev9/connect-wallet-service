@@ -391,9 +391,9 @@ export class ConnectWallet {
    *
    * @example connectWallet.resetConect();
    */
-  public resetConect = (): void => {
+  public resetConect = async (): Promise<void> => {
     if (this.connector instanceof WalletsConnect) {
-      this.connector.connector.disconnect();
+      await this.connector.connector.disconnect();
     }
     this.connector = undefined;
   };
